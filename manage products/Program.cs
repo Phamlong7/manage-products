@@ -63,10 +63,15 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Run database migrations on startup
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
     await dbContext.Database.MigrateAsync();
 }
+
+// Configure port from Render's PORT environment variable
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://+:{port}");
 
 app.Run();

@@ -77,13 +77,21 @@ All endpoints return structured errors through the shared `Result` mechanics to 
 
 1. Push this repository to GitHub.
 2. Create a new **Web Service** on Render.
-3. Set **Build Command** to `dotnet restore && dotnet publish -c Release -o out`.
-4. Set **Start Command** to `dotnet "out/manage products.dll"`.
+3. Connect your GitHub repository.
+4. Configure the service:
+   - **Runtime**: Select **Docker**
+   - **Branch**: `master` (or your default branch)
+   - **Region**: Choose your preferred region (e.g., Singapore)
+   - **Dockerfile Path**: `./Dockerfile` (or leave as `.` if Dockerfile is in root)
+   - **Root Directory**: Leave empty (or set to `manage products` if needed)
 5. Configure environment variables:
-   - `ASPNETCORE_URLS=http://0.0.0.0:10000`
    - `ConnectionStrings__ProductDatabase=<Neon connection string>`
    - `ClientApp__AllowedOrigins=https://your-vercel-domain.vercel.app`
-6. After deployment, note the public URL (e.g., `https://inventory-api.onrender.com`) — used by the frontend.
+   - `ASPNETCORE_ENVIRONMENT=Production`
+   - `PORT` is automatically set by Render (no need to configure)
+6. Click **Deploy Web Service**.
+7. After deployment, note the public URL (e.g., `https://inventory-api.onrender.com`) — used by the frontend.
+8. The application will automatically run database migrations on startup.
 
 ### Frontend: Vercel
 
