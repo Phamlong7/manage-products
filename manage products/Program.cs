@@ -47,20 +47,21 @@ builder.Services.AddDbContext<ProductDbContext>(options =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
-var allowedOrigins = builder.Configuration.GetSection("ClientApp:AllowedOrigins").Get<string[]>() ?? ["http://localhost:3000"];
-
+// Configure CORS to allow all origins
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendClient", policy =>
+    options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin()
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .WithExposedHeaders("Location");
+            .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
+
+// CORS must be enabled early in the pipeline, before other middleware
+app.UseCors();
 
 // Enable Swagger for all environments
 app.UseSwagger();
@@ -70,8 +71,6 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = "swagger"; // Swagger UI will be available at /swagger
     options.DisplayRequestDuration();
 });
-
-app.UseCors("FrontendClient");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
