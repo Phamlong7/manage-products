@@ -19,7 +19,19 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Product Inventory API",
+        Version = "v1",
+        Description = "RESTful API for managing product inventory with CRUD operations, search, filtering, and sorting capabilities.",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "API Support"
+        }
+    });
+});
 
 builder.Services.AddDbContext<ProductDbContext>(options =>
 {
@@ -50,11 +62,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// Enable Swagger for all environments
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Inventory API v1");
+    options.RoutePrefix = "swagger"; // Swagger UI will be available at /swagger
+    options.DisplayRequestDuration();
+});
 
 app.UseCors("FrontendClient");
 
